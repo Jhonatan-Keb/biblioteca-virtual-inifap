@@ -1,0 +1,71 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // Recuerda: en Prisma 7 la URL va en prisma.config.ts, aquí no hace falta.
+}
+
+// --- TABLAS VIEJAS (Importadas) ---
+
+model pub_cientificas {
+  id            Int     @id @db.SmallInt
+  publicacion   String  @db.VarChar(500)
+  liga          String? @db.VarChar(200)
+  muestra       String  @db.Char(1)
+  cuenta        Int     @db.SmallInt
+  ano           Int     @db.SmallInt
+  mensaje       String? @db.VarChar(500)
+  publicacionot String? @db.VarChar(500)
+
+  @@index([id], map: "indexPubC")
+}
+
+model pub_tecnicas {
+  id          Int     @id @db.SmallInt
+  publicacion String  @db.VarChar(500)
+  imagen      String  @db.VarChar(200)
+  cuenta      Int     @db.SmallInt
+  muestra     String  @db.Char(1)
+  liga        String? @db.VarChar(200)
+  mensaje     String? @db.VarChar(500)
+  ano         String? @db.VarChar(6)
+
+  @@index([id], map: "indexPT")
+}
+
+// --- NUEVOS MODELOS (Necesarios para tu sistema nuevo) ---
+
+model User {
+  id            String        @id @default(uuid())
+  email         String        @unique
+  password      String
+  name          String?
+  role          String        @default("USER") // 'ADMIN' | 'USER'
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  
+  // Relación con publicaciones (opcional, pero recomendada)
+  publicaciones Publicacion[]
+}
+
+model Publicacion {
+  id            String   @id @default(uuid())
+  titulo        String
+  tipo          String   // 'tecnica' | 'cientifica'
+  imagenUrl     String?
+  cuenta        Int?
+  muestra       Boolean  @default(true)
+  liga          String?
+  año           String?
+  descripcion   String?  @db.Text
+  publicacionot String?  // Campo específico de científicas
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relación con User
+  userId        String?
+  user          User?    @relation(fields: [userId], references: [id])
+}
