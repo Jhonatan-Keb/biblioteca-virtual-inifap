@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import AdminSidebar from "@/components/admin-sidebar";
+import { Toaster } from "sonner";
 
 export default async function AdminLayout({
   children,
@@ -17,7 +18,8 @@ export default async function AdminLayout({
   return (
     <div className="flex min-h-screen">
       <AdminSidebar />
-      <main className="flex-1 p-8">
+      <main className="flex-1 p-6">
+        <Toaster position="top-right" />
         {children}
       </main>
     </div>
