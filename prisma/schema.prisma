@@ -2,12 +2,12 @@ generator client {
   provider = "prisma-client-js"
 }
 
+// ESTO ES LO QUE TE FALTABA (El bloque que define el tipo de BD)
 datasource db {
   provider = "postgresql"
-  // Recuerda: en Prisma 7 la URL va en prisma.config.ts, aquí no hace falta.
 }
 
-// --- TABLAS VIEJAS (Importadas) ---
+// --- TABLAS VIEJAS (Recuperadas de tu base de datos) ---
 
 model pub_cientificas {
   id            Int     @id @db.SmallInt
@@ -35,7 +35,7 @@ model pub_tecnicas {
   @@index([id], map: "indexPT")
 }
 
-// --- NUEVOS MODELOS (Necesarios para tu sistema nuevo) ---
+// --- NUEVOS MODELOS (Para tu nuevo sistema Admin) ---
 
 model User {
   id            String        @id @default(uuid())
@@ -46,7 +46,6 @@ model User {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
   
-  // Relación con publicaciones (opcional, pero recomendada)
   publicaciones Publicacion[]
 }
 
@@ -60,12 +59,11 @@ model Publicacion {
   liga          String?
   año           String?
   descripcion   String?  @db.Text
-  publicacionot String?  // Campo específico de científicas
+  publicacionot String?  
   
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  // Relación con User
   userId        String?
   user          User?    @relation(fields: [userId], references: [id])
 }
